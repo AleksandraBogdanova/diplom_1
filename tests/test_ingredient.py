@@ -1,28 +1,42 @@
-from praktikum.burger import Burger
-from praktikum.database import Database
+import pytest
+from praktikum.ingredient import Ingredient
+from praktikum.ingredient_types import (
+    INGREDIENT_TYPE_SAUCE,
+    INGREDIENT_TYPE_FILLING,
+)
+from tests.constants import ALL_INGREDIENTS
 
 
-def test_main_scenario_receipt():
-    database = Database()
-    burger = Burger()
+class TestIngredient:
 
-    buns = database.available_buns()
-    ingredients = database.available_ingredients()
+    @pytest.mark.parametrize(
+        "name, price, ingredient_type",
+        ALL_INGREDIENTS,
+    )
+    def test_get_name_returns_name(self, name, price, ingredient_type):
+        ingredient = Ingredient(ingredient_type, name, price)
+        assert ingredient.get_name() == name
 
-    burger.set_buns(buns[0])
-    burger.add_ingredient(ingredients[1])
-    burger.add_ingredient(ingredients[4])
-    burger.add_ingredient(ingredients[3])
-    burger.add_ingredient(ingredients[5])
+    @pytest.mark.parametrize(
+        "name, price, ingredient_type",
+        ALL_INGREDIENTS,
+    )
+    def test_get_price_returns_price(self, name, price, ingredient_type):
+        ingredient = Ingredient(ingredient_type, name, price)
+        assert ingredient.get_price() == price
 
-    burger.move_ingredient(2, 1)
-    burger.remove_ingredient(3)
+    @pytest.mark.parametrize(
+        "name, price, ingredient_type",
+        ALL_INGREDIENTS,
+    )
+    def test_get_type_returns_type(self, name, price, ingredient_type):
+        ingredient = Ingredient(ingredient_type, name, price)
+        assert ingredient.get_type() == ingredient_type
 
-    receipt = burger.get_receipt()
-
-
-    assert burger.get_price() == 700
-    assert "(==== black bun ====)" in receipt
-    assert "= sauce sour cream =" in receipt
-    assert "= filling cutlet =" in receipt
-    assert "= filling dinosaur =" in receipt
+    @pytest.mark.parametrize(
+        "ingredient_type",
+        [INGREDIENT_TYPE_SAUCE, INGREDIENT_TYPE_FILLING],
+    )
+    def test_type_matches_constructor(self, ingredient_type):
+        ingredient = Ingredient(ingredient_type, "test", 100)
+        assert ingredient.get_type() == ingredient_type
